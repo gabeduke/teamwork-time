@@ -1,7 +1,6 @@
 import configparser
 
 import easyargs
-import pudb
 from cursesmenu import *
 from cursesmenu.items import FunctionItem
 

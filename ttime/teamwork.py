@@ -1,4 +1,5 @@
-import pudb
+from threading import Thread
+
 import requests
 import json
 
@@ -9,8 +10,13 @@ class Teamwork(object):
     Based on Teamwork API: http://developer.teamwork.com/
     """
     def __init__(self, domain, api_key):
-        self._domain = domain
         self._api_key = api_key
+        self._domain = domain
+        thread = Thread(target=self.background, args=())
+        thread.daemon = True
+        thread.start()
+
+    def background(self):
         self._account = self.authenticate()
         self._user = User(self._account.get('userId'))
 
@@ -24,7 +30,7 @@ class Teamwork(object):
             payload = params
 
         request = requests.get(
-            url, auth=(self._api_key, ''), params=payload)
+            url, auth=(self._api_key, '*'), params=payload)
 
         return request.json()
 
@@ -34,7 +40,7 @@ class Teamwork(object):
             url = "%s/%s" % (url, path)
 
         request = requests.post(
-            url, auth=(self._api_key, ''), data=data)
+            url, auth=(self._api_key, '*'), data=data)
         if request.status_code != 201:
             raise RuntimeError("Not Valid request")
         return request.text

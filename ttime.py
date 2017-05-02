@@ -20,6 +20,7 @@ base_uri = config['user']['company'] + ".teamwork.com"
 api_key = config['user']['api_key']
 instance = teamwork.Teamwork(base_uri, api_key)
 
+
 @easyargs
 def main(rebuild_projects="false"):
     """
@@ -31,16 +32,6 @@ def main(rebuild_projects="false"):
         get_projects()
 
     menu()
-
-
-def select_project():
-    title = "###PROJECT LIST###"
-    options = []
-    config_dict = dict(config.items('projects'))
-    for key, value in config_dict:
-        options.append(key)
-
-    option, index = pick(options, title)
 
 
 def get_projects():
@@ -63,6 +54,15 @@ def get_projects():
         add_config(config, project_name, tasks_ids)
 
 
+def select_projects():
+    title = "###PROJECT LIST###"
+    options = []
+    config_dict = dict(config.items('projects'))
+    for key, value in config_dict:
+        options.append(key)
+
+    option, index = pick(options, title)
+
 
 def menu():
     # create the menu object
@@ -70,7 +70,7 @@ def menu():
 
     # create the menu items
     rebuild_projects = FunctionItem("Rebuild Project Cache", get_projects())
-    select_project = FunctionItem("Select Project", select_project())
+    select_project = FunctionItem("Select Project", select_projects())
 
     # build the menu
     this_menu.append_item(rebuild_projects)

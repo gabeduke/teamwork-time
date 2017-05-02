@@ -1,6 +1,7 @@
 import configparser
 
 import easyargs
+import pudb
 from cursesmenu import *
 from cursesmenu.items import FunctionItem
 
@@ -17,9 +18,8 @@ initialize_config(config, configfile_name)
 project_ids = {}
 base_uri = config['user']['company'] + ".teamwork.com"
 api_key = config['user']['api_key']
-
-
 instance = teamwork.Teamwork(base_uri, api_key)
+
 
 @easyargs
 def main(rebuild_projects="false"):
@@ -39,8 +39,8 @@ def menu():
     this_menu = CursesMenu("Teamwork Time", "Menu")
 
     # create the menu items
-    rebuild_projects = FunctionItem("Rebuild Project Cache", get_projects(instance, project_ids, config))
-    select_project = FunctionItem("Select Project", select_projects(config))
+    rebuild_projects = FunctionItem("Rebuild Project Cache", get_projects, [instance, project_ids, config])
+    select_project = FunctionItem("Select Project", select_projects, [config], should_exit=True)
 
     # build the menu
     this_menu.append_item(rebuild_projects)
@@ -48,7 +48,10 @@ def menu():
 
     # show the menu
     this_menu.show()
+    this_menu.clear_screen()
+    return select_project.get_return()
 
 
 if __name__ == "__main__":
-    menu()
+    selection = menu()
+    print(selection)

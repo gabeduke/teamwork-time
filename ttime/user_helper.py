@@ -1,3 +1,4 @@
+import pudb
 from pick import pick
 
 from ttime.conf_helper import add_config
@@ -29,6 +30,6 @@ def select_projects(config):
     for key, value in config_dict.items():
         options.append(key)
 
+    #pudb.set_trace()
     option, index = pick(options, title)
-    print(option)
-    print(index)
+    return option

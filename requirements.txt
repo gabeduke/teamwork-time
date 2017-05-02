@@ -1,4 +1,3 @@
 pick
 easyargs
-python-teamwork
 curses-menu

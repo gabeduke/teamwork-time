@@ -1,17 +1,19 @@
 import configparser
+import os
 
 import easyargs
 from cursesmenu import *
 from cursesmenu.items import FunctionItem
+from cursesmenu.items import SubmenuItem
 
 from ttime import teamwork
 from ttime.conf_helper import initialize_config
-from ttime.user_helper import get_projects, select_projects
+from ttime.user_helper import get_projects, select_projects, select_tasks
 
-configfile_name = "config.ini"
+configfile_name = os.getenv("HOME") + ".config.ini"
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('.config.ini')
 
 initialize_config(config, configfile_name)
 project_ids = {}
@@ -28,12 +30,12 @@ def main(rebuild_projects="false"):
     """
     if rebuild_projects != "false":
         print('###REBUILDING PROJECTS###')
-        #get_projects()
+        # get_projects()
 
-    menu()
+    main_menu()
 
 
-def menu():
+def main_menu():
     # create the menu object
     this_menu = CursesMenu("Teamwork Time", "Menu")
 
@@ -52,5 +54,16 @@ def menu():
 
 
 if __name__ == "__main__":
-    selection = menu()
-    print(selection)
+    project = main_menu()
+    task = select_tasks(config, project)
+    task_id = config.get(project, task)
+
+    map = {
+        "entry_date": input("Date: \n"),
+        "description": input("Description: \n"),
+        "start_time": input("Start time: \n"),
+        "duration": input("Duration: \n"),
+        "is_billable": input("Billable (0 or 1): \n")
+    }
+
+    instance.save_project_task_time_entry(task_id, map["entry_date"], map["duration"], map["description"], map["start_time"])

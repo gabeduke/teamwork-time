@@ -146,6 +146,33 @@ class Teamwork(object):
             data=json.dumps(data))
         return result
 
+    def save_project_task_time_entry(self, task_id, entry_date, duration, description, start_time):
+        """
+        :param: task_id: Task ID
+        :param: date: datetime.date Date of time entry
+        :param: duration: datetime.timedelta Duration
+        :param: user_id: Integer Id of person
+        :param: description: String Id of person
+        :param: start_time: datetime.timedelta
+        """
+        duration_hours, duration_minutes = timedelta_to_hours_minutes(duration)
+
+        data = {
+            "time-entry": {
+                "description": description,
+                "person-id": self._user,
+                "date": entry_date.strftime('%Y%m%d'),
+                "time": time_to_hhmm(start_time),
+                "hours": duration_hours,
+                "minutes": duration_minutes,
+                "isbillable": "1"
+            }
+        }
+        result = self.post(
+            '/projects/%i/time_entries.json' % task_id,
+            data=json.dumps(data))
+        return result
+
     def get_time_entry(self, time_id):
         result = self.get('time_entries/%i.json' % time_id)
         return result.get('time-entry')
